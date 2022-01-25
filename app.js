@@ -1,5 +1,8 @@
 const express = require('express');
-const { connectToServer, getDb} = require('./db/conn');
+const { router} = require('./routes/web');
+
+const { connectToServer } = require('./db/conn');
+
 
 // express app
 const app = express();
@@ -10,12 +13,17 @@ connectToServer((err) => {
     app.listen(3000);
 });
 
-app.get('/', (req, res) => {
-    console.log('get request');
+// app.get('/', (req, res) => {
+//     console.log('get request');
 
-    getDb().collection('posts').find().toArray().then((dd) => {
-        console.log(dd);
-        res.end(JSON.stringify(dd));
-    });
+//     // getDb().collection('posts').find().toArray().then((dd) => {
+//     //     console.log(dd);
+//     //     res.end(JSON.stringify(dd));
+//     // });
+//     res.end('hello');
 
-})
+// })
+
+
+// use router
+app.use('/', router);
