@@ -1,137 +1,83 @@
-const http = require('http');
-const mongoClient = require('mongodb').MongoClient;
+const express = require('express');
+const morgan = require('morgan');
+const mongoose = require('mongoose');
+const blogRouters = require('./routes/blogRoutes');
 
-const hostname = '127.0.0.1';
-const port = 3000;
-const url = 'mongodb://localhost:27017/';
 
-var dbo;
-var db;
 
-mongoClient.connect(url, (err, database) => {
-    if (err) console.log(err);
-    db = database;
-    dbo = database.db('node_mongo');
+// express app
+const app = express();
+
+// connect to mongodb
+const dbURL = 'mongodb+srv://root:root@cluster0.omszk.mongodb.net/nodedb?retryWrites=true&w=majority';
+mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then((result) => app.listen(3000))
+    .catch((err) => console.log(err));
+
+
+// register view engine
+app.set('view engine', 'ejs');
+
+// middleware & static files [public folder accesiable]
+
+app.use(express.static('public'));
+
+// for post, put, delete methods
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use(morgan('dev'));
+
+
+
+
+// middleware 
+app.use((req, res, next) => {
+    console.log('new request made');
+    console.log('host: ', req.hostname);
+    next();
 })
 
-const server = http.createServer((req, res) => {
+app.use((req, res, next) => {
+    console.log('in the next middleware');
+    next();
+})
 
-    if (req.url == '/get-one') {
-        // dbo.createCollection('customers', (err, res) => {
-        //     if (err) console.log(err);
-        //     console.log('Collection created!');
-        // });
 
-        dbo.collection('customers').find({ name: 'Ince Company' }).toArray((err, result) => {
-            if (err) console.log(err);
-            res.statusCode = 200;
-            // res.setHeader('Content-Type', 'text/plain');
-            res.end(JSON.stringify(result));
-        });
-    }
+app.get('/', (req, res) => {
+    // res.send('<p>home page</p>');
+    // res.sendFile('./view/index.html', { root: __dirname });
 
-    if (req.url == '/get-all') {
-        dbo.collection('customers').find().toArray((err, result) => {
-            if (err) console.log(err);
-            res.statusCode = 200;
-            // res.setHeader('Content-Type', 'text/plain');
-            res.end(JSON.stringify(result));
-        });
-    }
+    res.redirect('/blogs');
+    const blogs = [
+        { title: 'hello', name: 'my name' },
+        { title: 'hello', name: 'my name' },
+
+    ]
+    res.render('index', { title: 'Home', blogs: blogs });
+
+
+});
+
+app.get('/about', (req, res) => {
+    // res.send('<p>about page</p>');
+    // res.sendFile('./view/about.html', { root: __dirname });
+    res.render('about');
 
 
 });
 
 
+app.get('/about-us', (req, res) => {
+    res.redirect('/about');
+});
 
-// server.listen(port, () => {
-//     console.log(`Server running at http://${hostname}:${port}/`);
-// })
+// use router
+app.use('/blogs', blogRouters);
 
-
-
-// if (err) console.log(err);
-// console.log(req.url);
-// const dbo = db.db('node_mongo');
-// dbo.createCollection('customers', (err, res) => {
-//     if (err) console.log(err);
-//     console.log('Collection created!');
-
-// })
-// let myObj = { name: 'Ince Company', address: 'Highway 56' };
-// dbo.collection('customers').insertOne(myObj, (err, res) => {
-//     if (err) console.log(err);
-//     console.log('1 document inserted');
-//     db.close();
-
-// });
-// dbo.collection('customers').find({ name: 'Ince Company' }).toArray((err, result) => {
-//     if (err) console.log(err);
-//     res.statusCode = 200;
-//     // res.setHeader('Content-Type', 'text/plain');
-//     res.end(JSON.stringify(result));
-//     db.close();
-// })
-
-// dbo.collection('customers').deleteOne({ name: 'Company Inc' }, (err, res) => {
-//     if (err) console.log(err);
-//     console.log(res);
-//     db.close();
-// })
-
-
-// res.end(req.url);
-// if (req.url == '/') {
-//     connectMongo();
-// }
-
-// function connectMongo() {
-//     mongoClient.connect(url, (err, db) => {
-//         if (err) console.log(err);
-//         console.log(req.url);
-//         const dbo = db.db('node_mongo');
-//         let myObj = { name: 'Ince Company', address: 'Highway 56' };
-
-//         dbo.collection('customers').find({ name: 'Ince Company' }).toArray((err, result) => {
-//             if (err) console.log(err);
-//             res.statusCode = 200;
-//             // res.setHeader('Content-Type', 'text/plain');
-//             res.end(JSON.stringify(result));
-//             db.close();
-//         })
-//     })
-// }
-// mongoClient.connect(url, (err, db) => {
-//     if (err) console.log(err);
-//     console.log(req.url);
-//     const dbo = db.db('node_mongo');
-//     // dbo.createCollection('customers', (err, res) => {
-//     //     if (err) console.log(err);
-//     //     console.log('Collection created!');
-
-//     // })
-//     let myObj = { name: 'Ince Company', address: 'Highway 56' };
-//     // dbo.collection('customers').insertOne(myObj, (err, res) => {
-//     //     if (err) console.log(err);
-//     //     console.log('1 document inserted');
-//     //     db.close();
-
-//     // });
-//     dbo.collection('customers').find({ name: 'Ince Company' }).toArray((err, result) => {
-//         if (err) console.log(err);
-//         res.statusCode = 200;
-//         // res.setHeader('Content-Type', 'text/plain');
-//         res.end(JSON.stringify(result));
-//         db.close();
-//     })
-
-//     // dbo.collection('customers').deleteOne({ name: 'Company Inc' }, (err, res) => {
-//     //     if (err) console.log(err);
-//     //     console.log(res);
-//     //     db.close();
-//     // })
-// })
-
-server.listen(port, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-})
+// app.use('url', (req, res) => {
+app.use((req, res) => {
+    // res.sendFile('./view/404.html', { root: __dirname });
+    // res.status(404).sendFile('./view/404.html', { root: __dirname });
+    res.render('404');
+});
