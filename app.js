@@ -1,14 +1,11 @@
 const express = require('express');
-const conn = require('./db/conn');
-const { MongoClient } = require('mongodb');
-
+const { connectToServer, getDb} = require('./db/conn');
 
 // express app
 const app = express();
-// var db;
 
 // connect to mongodb
-conn.connectToServer((err) => {
+connectToServer((err) => {
     if (err) console.log(err);
     app.listen(3000);
 });
@@ -16,16 +13,7 @@ conn.connectToServer((err) => {
 app.get('/', (req, res) => {
     console.log('get request');
 
-    // db.collection('posts').insertOne(
-    //     {
-    //         title: 'title 01',
-    //         body: 'body 01'
-    //     }
-    // );
-
-    let data = conn.getDb().collection('posts').find().toArray();
-    // console.log(data);
-    data.then((dd) => {
+    getDb().collection('posts').find().toArray().then((dd) => {
         console.log(dd);
         res.end(JSON.stringify(dd));
     });
