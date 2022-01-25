@@ -1,83 +1,33 @@
 const express = require('express');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-const blogRouters = require('./routes/blogRoutes');
-
+const conn = require('./db/conn');
+const { MongoClient } = require('mongodb');
 
 
 // express app
 const app = express();
+// var db;
 
 // connect to mongodb
-const dbURL = 'mongodb+srv://root:root@cluster0.omszk.mongodb.net/nodedb?retryWrites=true&w=majority';
-mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then((result) => app.listen(3000))
-    .catch((err) => console.log(err));
-
-
-// register view engine
-app.set('view engine', 'ejs');
-
-// middleware & static files [public folder accesiable]
-
-app.use(express.static('public'));
-
-// for post, put, delete methods
-app.use(express.urlencoded({ extended: true }));
-
-
-app.use(morgan('dev'));
-
-
-
-
-// middleware 
-app.use((req, res, next) => {
-    console.log('new request made');
-    console.log('host: ', req.hostname);
-    next();
-})
-
-app.use((req, res, next) => {
-    console.log('in the next middleware');
-    next();
-})
-
+conn.connectToServer((err) => {
+    if (err) console.log(err);
+    app.listen(3000);
+});
 
 app.get('/', (req, res) => {
-    // res.send('<p>home page</p>');
-    // res.sendFile('./view/index.html', { root: __dirname });
+    console.log('get request');
 
-    res.redirect('/blogs');
-    const blogs = [
-        { title: 'hello', name: 'my name' },
-        { title: 'hello', name: 'my name' },
+    // db.collection('posts').insertOne(
+    //     {
+    //         title: 'title 01',
+    //         body: 'body 01'
+    //     }
+    // );
 
-    ]
-    res.render('index', { title: 'Home', blogs: blogs });
+    let data = conn.getDb().collection('posts').find().toArray();
+    // console.log(data);
+    data.then((dd) => {
+        console.log(dd);
+        res.end(JSON.stringify(dd));
+    });
 
-
-});
-
-app.get('/about', (req, res) => {
-    // res.send('<p>about page</p>');
-    // res.sendFile('./view/about.html', { root: __dirname });
-    res.render('about');
-
-
-});
-
-
-app.get('/about-us', (req, res) => {
-    res.redirect('/about');
-});
-
-// use router
-app.use('/blogs', blogRouters);
-
-// app.use('url', (req, res) => {
-app.use((req, res) => {
-    // res.sendFile('./view/404.html', { root: __dirname });
-    // res.status(404).sendFile('./view/404.html', { root: __dirname });
-    res.render('404');
-});
+})
