@@ -2,10 +2,10 @@
   "name": "express-mongo",
   "version": "1.0.0",
   "description": "Express and pure mongo",
-  "main": "app.js",
+  "main": "event.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon event.js"
   },
   "repository": {
     "type": "git",
