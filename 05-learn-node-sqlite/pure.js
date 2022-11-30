@@ -23,15 +23,20 @@ let user = { name: 'John' };
 let admin = user;
 
 admin.name = 'Pete'; // changed by the "admin" reference
-user['name'] = 'Johnny';
+// user['name'] = 'Johnny';
 
 console.log(user.name);
+console.log(admin);
 
 let clone = {};
 
 // copy value only not reference
 // Object.assign(clone, { name: "Pete" });
 Object.assign(clone, user);
+console.log(clone);
+clone.name = "Doe";
+console.log(user);
+
 
 // copy reference
 let copy = user;
