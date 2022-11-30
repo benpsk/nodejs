@@ -3,20 +3,25 @@ const blogController = require('../controllers/blogController');
 
 const router = express.Router();
 
-router.get('/blogs', blogController.blog_index)
+router.use((req, res, next) => {
+  console.log('Time: ', Date.now())
+  next()
+})
 
-// router.post('/blogs', (req, res) => {
-//     console.log(req.body);
+router.get('/', blogController.blog_index)
 
-//     const blog = new Blog(req.body);
-//     blog.save()
-//         .then((result) => {
-//             res.redirect('/blogs');
-//         })
-//         .catch((err) => console.log(err))
-// })
+router.post('/blogs', (req, res) => {
+    console.log(req.body);
 
-router.get('/blogs/:id', blogController.blog_detail);
+    const blog = new Blog(req.body);
+    blog.save()
+        .then((result) => {
+            res.redirect('/blogs');
+        })
+        .catch((err) => console.log(err))
+})
+
+router.get('/:id', blogController.blog_detail);
 
 
 // router.delete('/blogs/:id', (req, res) => {

@@ -16,6 +16,7 @@ mongoose.connect(dbURL, { useNewUrlParser: true, useUnifiedTopology: true })
 
 
 // register view engine
+app.set('views', 'view');
 app.set('view engine', 'ejs');
 
 // middleware & static files [public folder accesiable]
@@ -48,7 +49,7 @@ app.get('/', (req, res) => {
     // res.send('<p>home page</p>');
     // res.sendFile('./view/index.html', { root: __dirname });
 
-    res.redirect('/blogs');
+    // res.redirect('/blogs');
     const blogs = [
         { title: 'hello', name: 'my name' },
         { title: 'hello', name: 'my name' },
