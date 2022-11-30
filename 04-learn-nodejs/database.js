@@ -43,7 +43,8 @@ function makeDatabaseRequest(type, cb) {
         if (err) {
             cb(err, null);
         } else {
-            cb(null, JSON.parse(payload)[type]);
+            cb(null, JSON.parse(payload));
         }
     });
+    console.log('first');
 }
