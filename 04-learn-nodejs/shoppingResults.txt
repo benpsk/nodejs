@@ -1,0 +1,3 @@
+They were out of: Banana
+They were out of: Orange
+They were out of: Apple

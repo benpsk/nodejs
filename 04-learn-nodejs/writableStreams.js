@@ -12,5 +12,5 @@ const transformData = (line) => {
 }
 
 myInterface.on('line', transformData);
-fileStream.end();
 
+// fileStream.end();
