@@ -10,7 +10,7 @@
   "author": "Ben Gunn",
   "license": "ISC",
   "dependencies": {
-    "mongodb": "^4.2.2",
+    "mongodb": "^4.17.0",
     "nodemon": "^2.0.15"
   }
 }
